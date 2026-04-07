@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Elegance - Home</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="logo-link">
+                    <span class="logo">Restaurant Elegance</span>
+                </a>
+                <button class="hamburger" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="nav-panel">
+                    <ul class="nav-links">
+                        <li><a href="index.html" class="active">Home</a></li>
+                        <li><a href="menu.html">Menu</a></li>
+                        <li><a href="cart.html">Cart</a></li>
+                        <li><a href="orders.html">Orders</a></li>
+                        <li><a href="feedback.html">Contact</a></li>
+                    </ul>
+                    
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="container hero-layout">
+                <div class="hero-copy">
+                    <p class="eyebrow">Fresh food. Fast service. Better frontend.</p>
+                    <h1 class="hero-heading">A modern restaurant menu experience built on your existing project.</h1>
+                    <p class="hero-tagline">
+                        Browse categories, search dishes, add items to cart, and place your order from a cleaner and more interactive interface.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="menu.html" class="hero-btn primary-btn">Explore Menu</a>
+                        <a href="cart.html" class="hero-btn secondary-btn">Place an Order</a>
+                    </div>
+                </div>
+
+                <div class="hero-card">
+                    <h2>Why this version is better</h2>
+                    <div class="hero-points">
+                        <div class="info-pill">Responsive navbar</div>
+                        <div class="info-pill">Search and filters</div>
+                        <div class="info-pill">Cart with localStorage</div>
+                        <div class="info-pill">Styled prices and availability</div>
+                        <div class="info-pill">Better spacing and alignment</div>
+                        <div class="info-pill">Beginner-friendly JavaScript</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <div class="section-heading">
+                    <p class="eyebrow">Project Highlights</p>
+                    <h2>Everything now works like a proper frontend portfolio project</h2>
+                </div>
+
+                <div class="feature-grid">
+                    <article class="feature-card">
+                        <i class="fas fa-utensils feature-icon"></i>
+                        <h3>Interactive Menu</h3>
+                        <p>Modern menu cards with real prices, category filters, dish search, and a working load more button.</p>
+                        <a href="menu.html" class="feature-link">Open Menu</a>
+                    </article>
+
+                    <article class="feature-card">
+                        <i class="fas fa-shopping-cart feature-icon"></i>
+                        <h3>Cart and Order Flow</h3>
+                        <p>Items are stored in an array, saved to localStorage, and shown with live cart count across pages.</p>
+                        <a href="cart.html" class="feature-link">Order Now</a>
+                    </article>
+
+                    <article class="feature-card">
+                        <i class="fas fa-star feature-icon"></i>
+                        <h3>Cleaner UI</h3>
+                        <p>Improved spacing, hover effects, consistent cards, and a responsive layout for desktop, tablet, and mobile.</p>
+                        <a href="feedback.html" class="feature-link">Send Feedback</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Restaurant Elegance. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

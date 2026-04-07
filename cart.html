@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Elegance - Order</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="logo-link">
+                    <span class="logo">Restaurant Elegance</span>
+                </a>
+                <button class="hamburger" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="nav-panel">
+                    <ul class="nav-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="menu.html">Menu</a></li>
+                        <li><a href="cart.html" class="active">Cart</a></li>
+                        <li><a href="orders.html">Orders</a></li>
+                        <li><a href="feedback.html">Contact</a></li>
+                    </ul>
+                    
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="order-section" id="orders">
+            <div class="container order-layout">
+                <div class="section-heading">
+                    <p class="eyebrow">Checkout</p>
+                    <h1>Review your cart and place the order</h1>
+                </div>
+
+                <div class="order-grid">
+                    <div class="order-summary card-panel">
+                        <h2><i class="fas fa-shopping-bag"></i> Cart Summary</h2>
+                        <div id="cartPreview" class="cart-preview"></div>
+                        <div class="summary-total">
+                            Total: <span id="cartTotal">&#8377;0</span>
+                        </div>
+                    </div>
+
+                    <div class="user-details card-panel">
+                        <h2><i class="fas fa-user"></i> Delivery Details</h2>
+                        <form id="orderForm" novalidate>
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                                <small class="field-error"></small>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" id="phone" name="phone" placeholder="10-digit mobile number" required>
+                                    <small class="field-error"></small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" id="email" name="email" placeholder="Email address" required>
+                                    <small class="field-error"></small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="address">Delivery Address</label>
+                                <textarea id="address" name="address" placeholder="Enter your complete address" required></textarea>
+                                <small class="field-error"></small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="pincode">Pincode</label>
+                                <input type="text" id="pincode" name="pincode" placeholder="Enter pincode" required>
+                                <small class="field-error"></small>
+                            </div>
+
+                            <p class="form-note">All fields are mandatory. Please fill in all details to proceed to payment.</p>
+
+                            <button type="button" id="proceedBtn" class="submit-btn">Proceed to Payment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Restaurant Elegance. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

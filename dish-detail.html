@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dish Details - Restaurant Elegance</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="logo-link">
+                    <span class="logo">Restaurant Elegance</span>
+                </a>
+                <button class="hamburger" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="nav-panel">
+                    <ul class="nav-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="menu.html">Menu</a></li>
+                        <li><a href="cart.html">Cart</a></li>
+                        <li><a href="orders.html">Order</a></li>
+                        <li><a href="feedback.html">Contact</a></li>
+                    </ul>
+                    
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="dishDetail" class="dish-detail-section">
+            <div class="container">
+                <a href="menu.html" class="back-link">← Back to Menu</a>
+
+                <div class="dish-detail-container">
+                    <div class="dish-detail-image">
+                        <img id="dishImage" src="" alt="Dish">
+                    </div>
+
+                    <div class="dish-detail-info">
+                        <div class="dish-detail-meta">
+                            <span id="dishCategory" class="dish-category">Category</span>
+                            <span class="status-badge available">Available</span>
+                        </div>
+                        <h1 id="dishName">Dish Name</h1>
+                        <p id="dishDescription" class="dish-detail-description">Dish description goes here.</p>
+
+                        <div class="dish-detail-specifications">
+                            <div class="spec-item">
+                                <span class="spec-label">Category:</span>
+                                <span id="specCategory" class="spec-value">---</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Price:</span>
+                                <span id="specPrice" class="spec-value price">₹0</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Availability:</span>
+                                <span class="spec-value">In Stock</span>
+                            </div>
+                        </div>
+
+                        <div class="quantity-selector">
+                            <label for="quantity">Quantity:</label>
+                            <div class="quantity-control">
+                                <button id="decreaseQty" type="button" class="qty-btn">−</button>
+                                <input id="quantity" type="number" value="1" min="1" max="10">
+                                <button id="increaseQty" type="button" class="qty-btn">+</button>
+                            </div>
+                        </div>
+
+                        <div class="detail-actions">
+                            <button id="addToCartDetailBtn" class="add-to-cart-btn" type="button">
+                                <i class="fas fa-shopping-cart"></i> Add to Cart
+                            </button>
+                            <a href="menu.html" class="btn-secondary">Back to Menu</a>
+                        </div>
+
+                        <div id="successMessage" class="success-message" style="display: none;">
+                            ✓ Added to cart successfully!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Restaurant Elegance. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const allDishes = [
+            { name: "Chicken Manchow Soup", category: "starters", image: "chicken-manchow-soup.jpg", description: "Spicy and tangy soup with chicken and vegetables.", price: 150 },
+            { name: "Chicken Sweet Corn Soup", category: "starters", image: "chicken-sweet-corn-soup.jpg", description: "Creamy soup with sweet corn and chicken pieces.", price: 140 },
+            { name: "Mutton Paya (Lamb Trotters Soup)", category: "starters", image: "mutton-paya.jpg", description: "Traditional soup made from lamb trotters.", price: 180 },
+            { name: "Chicken Hot and Sour Soup", category: "starters", image: "chicken-hot-and-sour-soup.jpg", description: "Spicy and sour soup with chicken and veggies.", price: 145 },
+            { name: "Chicken Mulligatawny Soup", category: "starters", image: "chicken-mulligatawny-soup.jpg", description: "Curry-flavored soup with chicken and lentils.", price: 155 },
+            { name: "Chicken Biryani", category: "main-course", image: "chicken-biryani.jpg", description: "Aromatic rice dish with spiced chicken.", price: 250 },
+            { name: "Mutton Biryani", category: "main-course", image: "mutton-biryani.jpg", description: "Fragrant rice with tender mutton pieces.", price: 280 },
+            { name: "Prawn Biryani", category: "main-course", image: "prawn-biryani.jpg", description: "Seafood biryani with fresh prawns.", price: 300 },
+            { name: "Fish Biryani", category: "main-course", image: "fish-biryani.jpg", description: "Biryani with marinated fish pieces.", price: 270 },
+            { name: "Seeraga Samba Chicken Biryani", category: "main-course", image: "seeraga-samba-chicken-biryani.jpg", description: "Special biryani with seeraga samba rice and chicken.", price: 320 },
+            { name: "Seeraga Samba Mutton Biryani", category: "main-course", image: "seeraga-samba-mutton-biryani.jpg", description: "Premium biryani with seeraga samba rice and mutton.", price: 350 },
+            { name: "Egg Biryani", category: "main-course", image: "egg-biryani.jpg", description: "Biryani with boiled eggs and spices.", price: 200 },
+            { name: "Empty Biryani", category: "main-course", image: "empty-biryani.jpg", description: "Biryani without meat, just rice and spices.", price: 180 },
+            { name: "Non-Veg Meals", category: "main-course", image: "non-veg-meals.jpg", description: "Complete meal with rice, curry, and non-veg items.", price: 220 },
+            { name: "Chicken Noodles", category: "main-course", image: "chicken-noodles.jpg", description: "Stir-fried noodles with chicken and vegetables.", price: 190 },
+            { name: "Chicken Fried Rice", category: "main-course", image: "chicken-fried-rice.jpg", description: "Fried rice with chicken and mixed vegetables.", price: 180 },
+            { name: "Chicken 65", category: "side-dish", image: "chicken-65.jpg", description: "Spicy fried chicken bites.", price: 160 },
+            { name: "Chicken Lollipop", category: "side-dish", image: "chicken-lollipop.jpg", description: "Chicken wings shaped like lollipops.", price: 170 },
+            { name: "Chicken Sukka", category: "side-dish", image: "chicken-sukka.jpg", description: "Dry chicken curry with spices.", price: 175 },
+            { name: "Pepper Chicken Fry", category: "side-dish", image: "pepper-chicken-fry.jpg", description: "Chicken fried with pepper and spices.", price: 165 },
+            { name: "Chicken Tikka", category: "side-dish", image: "chicken-tikka.jpg", description: "Marinated chicken skewers grilled.", price: 180 },
+            { name: "Mutton Chukka", category: "side-dish", image: "mutton-chukka.jpg", description: "Spicy mutton dry curry.", price: 200 },
+            { name: "Mutton Keema Masala", category: "side-dish", image: "mutton-keema-masala.jpg", description: "Minced mutton cooked in rich gravy.", price: 210 },
+            { name: "Mutton Ghee Roast", category: "side-dish", image: "mutton-ghee-roast.jpg", description: "Mutton roasted in ghee with spices.", price: 220 },
+            { name: "Mutton Kola Urundai", category: "side-dish", image: "mutton-kola-urundai.jpg", description: "Mutton meatballs in spicy sauce.", price: 230 },
+            { name: "Vanjaram Fry", category: "side-dish", image: "vanjaram-fry.jpg", description: "Seer fish fried with spices.", price: 250 },
+            { name: "Nethilli Fry", category: "side-dish", image: "nethilli-fry.jpg", description: "Anchovies fried crispy.", price: 180 },
+            { name: "Shankara Fish Fry", category: "side-dish", image: "shankara-fish-fry.jpg", description: "Shankara fish fried with masala.", price: 240 },
+            { name: "Mathi Fry", category: "side-dish", image: "mathi-fry.jpg", description: "Sardine fish fry.", price: 190 },
+            { name: "Prawn Fry", category: "side-dish", image: "prawn-fry.jpg", description: "Prawns fried with spices.", price: 260 },
+            { name: "Lobster Fry", category: "side-dish", image: "lobster-fry.jpg", description: "Lobster pieces fried.", price: 350 },
+            { name: "Nanduu (Crab) Fry", category: "side-dish", image: "nanduu-crab-fry.jpg", description: "Crab fried with masala.", price: 300 },
+            { name: "Tea", category: "drinks", image: "tea.jpg", description: "Hot tea with milk and spices.", price: 50 },
+            { name: "Coffee", category: "drinks", image: "coffee.jpg", description: "Fresh brewed coffee.", price: 60 },
+            { name: "Soda", category: "drinks", image: "soda.jpg", description: "Carbonated soft drink.", price: 40 },
+            { name: "Lime Soda", category: "drinks", image: "lime-soda.jpg", description: "Soda with lime and mint.", price: 45 },
+            { name: "Lemon Juice", category: "drinks", image: "lemon-juice.jpg", description: "Fresh lemon juice.", price: 50 },
+            { name: "Coke", category: "drinks", image: "coke.jpg", description: "Coca-Cola soft drink.", price: 40 },
+            { name: "Pepsi", category: "drinks", image: "pepsi.jpg", description: "Pepsi soft drink.", price: 40 },
+            { name: "Sprite", category: "drinks", image: "sprite.jpg", description: "Sprite lemon-lime soda.", price: 40 },
+            { name: "7Up", category: "drinks", image: "7up.jpg", description: "7Up lemon-lime soda.", price: 40 },
+            { name: "Vanilla Ice Cream", category: "desserts", image: "vanilla-ice-cream.jpg", description: "Classic vanilla flavored ice cream.", price: 80 },
+            { name: "Strawberry Ice Cream", category: "desserts", image: "strawberry-ice-cream.jpg", description: "Strawberry flavored ice cream.", price: 85 },
+            { name: "Butterscotch Ice Cream", category: "desserts", image: "butterscotch-ice-cream.jpg", description: "Butterscotch flavored ice cream.", price: 90 },
+            { name: "Chocolate Ice Cream", category: "desserts", image: "chocolate-ice-cream.jpg", description: "Rich chocolate flavored ice cream.", price: 95 },
+            { name: "Pistachio Ice Cream", category: "desserts", image: "pistachio-ice-cream.jpg", description: "Pistachio nut flavored ice cream.", price: 100 }
+        ];
+
+        let cart = [];
+
+        function loadCart() {
+            const storedCart = localStorage.getItem('restaurantCart');
+            if (storedCart) {
+                try {
+                    cart = JSON.parse(storedCart);
+                } catch (error) {
+                    cart = [];
+                }
+            }
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            const cartCount = document.getElementById('cartCount');
+            if (!cartCount) return;
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+        }
+
+        function saveCart() {
+            localStorage.setItem('restaurantCart', JSON.stringify(cart));
+        }
+
+        function addToCartFromDetail(name, price, quantity) {
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({ name, price, quantity });
+            }
+            saveCart();
+            updateCartCount();
+            showSuccessMessage();
+        }
+
+        function showSuccessMessage() {
+            const message = document.getElementById('successMessage');
+            if (!message) return;
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 2000);
+        }
+
+        loadCart();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const dishName = decodeURIComponent(urlParams.get('name') || '');
+        const dishCategory = decodeURIComponent(urlParams.get('category') || '');
+        const dish = allDishes.find(d => d.name === dishName && d.category === dishCategory);
+
+        if (dish) {
+            document.getElementById('dishImage').src = `images/${dish.image}`;
+            document.getElementById('dishImage').alt = dish.name;
+            document.getElementById('dishName').textContent = dish.name;
+            document.getElementById('dishDescription').textContent = dish.description;
+            document.getElementById('dishCategory').textContent = dish.category.replace('-', ' ').toUpperCase();
+            document.getElementById('specCategory').textContent = dish.category.replace('-', ' ').toUpperCase();
+            document.getElementById('specPrice').textContent = `₹${dish.price}`;
+            document.title = `${dish.name} - Restaurant Elegance`;
+        } else {
+            document.getElementById('dishName').textContent = 'Dish not found';
+            document.getElementById('dishDescription').textContent = 'The requested dish could not be found. Please go back to the menu.';
+        }
+
+        const quantityInput = document.getElementById('quantity');
+        document.getElementById('decreaseQty').addEventListener('click', () => {
+            const val = Math.max(1, parseInt(quantityInput.value) - 1);
+            quantityInput.value = val;
+        });
+        document.getElementById('increaseQty').addEventListener('click', () => {
+            const val = Math.min(10, parseInt(quantityInput.value) + 1);
+            quantityInput.value = val;
+        });
+
+        document.getElementById('addToCartDetailBtn').addEventListener('click', () => {
+            if (!dish) return;
+            const quantity = parseInt(quantityInput.value) || 1;
+            addToCartFromDetail(dish.name, dish.price, quantity);
+        });
+    </script>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
