@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Elegance - Contact</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="logo-link">
+                    <span class="logo">Restaurant Elegance</span>
+                </a>
+                <button class="hamburger" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="nav-panel">
+                    <ul class="nav-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="menu.html">Menu</a></li>
+                        <li><a href="cart.html">Cart</a></li>
+                        <li><a href="orders.html">Orders</a></li>
+                        <li><a href="feedback.html" class="active">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="contact-bar">
+        <div class="container contact-bar-content">
+            <span><strong>Need help?</strong> Call us at <a href="tel:+919876543210">+91 98765 43210</a> or email <a href="mailto:hello@restaurantelegance.com">hello@restaurantelegance.com</a>.</span>
+            <a href="feedback.html" class="contact-bar-link">Send Feedback</a>
+        </div>
+    </div>
+
+    <main>
+        <section class="contact-section">
+            <div class="container">
+                <div class="section-heading">
+                    <p class="eyebrow">Get in Touch</p>
+                    <h1>Contact Restaurant Elegance</h1>
+                    <p class="hero-tagline">Find our location, contact details, and share your thoughts about our food and service.</p>
+                </div>
+
+                <div class="contact-layout">
+                    <div class="contact-card">
+                        <h2>Restaurant Details</h2>
+                        <p class="contact-text">Restaurant Elegance is located in the heart of Chennai, offering fresh meals, fast service, and a welcoming atmosphere.</p>
+
+                        <div class="contact-item">
+                            <h3>Address</h3>
+                            <p>123 Gourmet Avenue, Food Street,<br> Opposite Central Park, Egmore, Chennai - 600001</p>
+                        </div>
+
+                        <div class="contact-item">
+                            <h3>Location</h3>
+                            <p>Near Central Mall, Egmore Railway Station, Chennai.</p>
+                        </div>
+
+                        <div class="contact-item">
+                            <h3>Call Us</h3>
+                            <p><a href="tel:+919876543210">+91 98765 43210</a></p>
+                        </div>
+
+                        <div class="contact-item">
+                            <h3>Email</h3>
+                            <p><a href="mailto:hello@restaurantelegance.com">hello@restaurantelegance.com</a></p>
+                        </div>
+
+                        <div class="contact-item">
+                            <h3>Opening Hours</h3>
+                            <p>Daily: 10:00 AM – 11:00 PM</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-card feedback-card">
+                        <h2>Feedback Form</h2>
+                        <p class="contact-text">Share your experience with our food and service. We read every response and use it to improve.</p>
+
+                        <form id="feedbackForm" class="feedback-form" novalidate>
+                            <div class="form-group">
+                                <label for="feedbackName">Full Name</label>
+                                <input type="text" id="feedbackName" name="name" placeholder="Enter your name" required>
+                                <small class="field-error"></small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="feedbackEmail">Email Address</label>
+                                <input type="email" id="feedbackEmail" name="email" placeholder="Enter your email" required>
+                                <small class="field-error"></small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="feedbackPhone">Phone Number</label>
+                                <input type="tel" id="feedbackPhone" name="phone" placeholder="Optional">
+                                <small class="field-error"></small>
+                            </div>
+
+                            <div class="form-group rating-group">
+                                <span class="rating-label">How was your experience?</span>
+                                <label class="rating-option"><input type="radio" name="rating" value="5"> Excellent</label>
+                                <label class="rating-option"><input type="radio" name="rating" value="4"> Very Good</label>
+                                <label class="rating-option"><input type="radio" name="rating" value="3"> Good</label>
+                                <label class="rating-option"><input type="radio" name="rating" value="2"> Fair</label>
+                                <label class="rating-option"><input type="radio" name="rating" value="1"> Needs Improvement</label>
+                                <small class="field-error"></small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="feedbackComments">Your Feedback</label>
+                                <textarea id="feedbackComments" name="comments" placeholder="Tell us what you liked or how we can improve" required></textarea>
+                                <small class="field-error"></small>
+                            </div>
+
+                            <button type="submit" class="submit-btn">Submit Feedback</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Restaurant Elegance. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="js/script.js"></script>
+</body>
+</html>

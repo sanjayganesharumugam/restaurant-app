@@ -506,6 +506,12 @@ function setupOrdersPage() {
     }
 }
 
+function setupFeedbackForm() {
+    const feedbackForm = document.getElementById('feedbackForm');
+    if (!feedbackForm) {
+        return;
+    }
+
     feedbackForm.addEventListener('submit', event => {
         event.preventDefault();
 
@@ -520,6 +526,7 @@ function setupOrdersPage() {
         feedbackForm.reset();
     });
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     loadCart();
