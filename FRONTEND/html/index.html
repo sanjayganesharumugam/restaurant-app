@@ -108,6 +108,29 @@
         </div>
     </footer>
 
+    <div id="loginModal" class="modal" aria-modal="true" role="dialog" aria-labelledby="loginModalTitle" aria-describedby="loginModalDescription">
+        <div class="modal-content">
+            <button type="button" class="modal-close" aria-label="Close login form">×</button>
+            <div class="modal-header">
+                <h2 id="loginModalTitle">Welcome to Restaurant Elegance</h2>
+                <p id="loginModalDescription">Please log in to continue browsing and ordering.</p>
+            </div>
+            <form id="loginForm" class="modal-form" novalidate>
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" placeholder="Enter your email" required>
+                    <small class="field-error"></small>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required>
+                    <small class="field-error"></small>
+                </div>
+                <button type="submit" class="submit-btn">Login</button>
+            </form>
+        </div>
+    </div>
+
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script src="../js/script.js"></script>

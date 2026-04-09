@@ -835,6 +835,67 @@ footer {
     color: var(--muted-color);
 }
 
+.modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(18, 52, 59, 0.68);
+    z-index: 1500;
+    padding: 1.5rem;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    width: min(460px, 100%);
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    max-height: 100vh;
+    overflow: auto;
+}
+
+.modal-header {
+    margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.35rem;
+    color: var(--dark-color);
+}
+
+.modal-header p {
+    color: var(--muted-color);
+    line-height: 1.6;
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    border: none;
+    background: transparent;
+    color: var(--muted-color);
+    font-size: 1.8rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.modal-form .form-group {
+    margin-bottom: 1rem;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
 /* Dish Detail Page Styles */
 .dish-detail-section {
     padding: 2rem 0 4rem;

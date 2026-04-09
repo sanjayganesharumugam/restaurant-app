@@ -655,6 +655,61 @@ function setupOrdersPage() {
     displayOrders();
 }
 
+function showLoginModal() {
+    const loginModal = document.getElementById('loginModal');
+    if (!loginModal) {
+        return;
+    }
+    loginModal.classList.add('active');
+    document.body.classList.add('modal-open');
+}
+
+function hideLoginModal() {
+    const loginModal = document.getElementById('loginModal');
+    if (!loginModal) {
+        return;
+    }
+    loginModal.classList.remove('active');
+    document.body.classList.remove('modal-open');
+}
+
+function setupLoginPopup() {
+    const loginModal = document.getElementById('loginModal');
+    const loginForm = document.getElementById('loginForm');
+    const closeButton = document.querySelector('.modal-close');
+
+    if (!loginModal || !loginForm) {
+        return;
+    }
+
+    loginModal.addEventListener('click', event => {
+        if (event.target === loginModal) {
+            hideLoginModal();
+        }
+    });
+
+    if (closeButton) {
+        closeButton.addEventListener('click', hideLoginModal);
+    }
+
+    loginForm.addEventListener('submit', event => {
+        event.preventDefault();
+
+        const email = loginForm.querySelector('#loginEmail');
+        const password = loginForm.querySelector('#loginPassword');
+
+        if (!email.value.trim() || !password.value.trim()) {
+            showMessage('Please enter both email and password.');
+            return;
+        }
+
+        showMessage(`Welcome back, ${email.value.trim()}!`);
+        hideLoginModal();
+    });
+
+    showLoginModal();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     loadCart();
     setupNavbar();
@@ -662,4 +717,5 @@ document.addEventListener('DOMContentLoaded', () => {
     setupOrderForm();
     setupFeedbackForm();
     setupOrdersPage();
+    setupLoginPopup();
 });
