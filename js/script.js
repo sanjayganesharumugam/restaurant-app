@@ -483,6 +483,7 @@ function setupOrdersPage() {
     // Handle payment buttons
     if (cashOnDeliveryBtn) {
         cashOnDeliveryBtn.addEventListener('click', () => {
+            placeOrder(orderDetails);
             showMessage(`Thank you ${orderDetails.customer.name}. Your order has been placed with Cash on Delivery.`);
             alert(`Thank you ${orderDetails.customer.name}! Your order has been placed with Cash on Delivery.`);
             // Clear cart and order details
@@ -497,6 +498,7 @@ function setupOrdersPage() {
 
     if (payOnlineBtn) {
         payOnlineBtn.addEventListener('click', () => {
+            placeOrder(orderDetails);
             const upiUrl = `upi://pay?pa=merchant@upi&pn=Restaurant%20Elegance&am=${orderDetails.total}&cu=INR&tn=Food%20Order`;
             window.location.href = upiUrl;
             showMessage('Redirecting to payment app...');
@@ -527,6 +529,131 @@ function setupFeedbackForm() {
     });
 }
 
+// Orders management
+let orders = [];
+
+function loadOrders() {
+    const storedOrders = localStorage.getItem('restaurantOrders');
+    if (storedOrders) {
+        try {
+            orders = JSON.parse(storedOrders);
+        } catch (error) {
+            orders = [];
+        }
+    } else {
+        // Initialize with sample data for demo
+        const now = new Date();
+        orders = [
+            {
+                id: 'ORD' + (Date.now() - 86400000),
+                date: new Date(now - 86400000).toLocaleDateString(),
+                time: '12:30 PM',
+                status: 'Delivered',
+                items: [
+                    { name: 'Margherita Pizza', price: 250, quantity: 1 },
+                    { name: 'Caesar Salad', price: 180, quantity: 1 }
+                ],
+                total: 430,
+                customer: { name: 'John Doe', phone: '9876543210', email: 'john@example.com', address: '123 Main St', pincode: '110001' }
+            },
+            {
+                id: 'ORD' + Date.now(),
+                date: now.toLocaleDateString(),
+                time: now.toLocaleTimeString(),
+                status: 'Order Placed',
+                items: [
+                    { name: 'Chicken Burger', price: 220, quantity: 2 },
+                    { name: 'French Fries', price: 120, quantity: 1 }
+                ],
+                total: 560,
+                customer: { name: 'Jane Smith', phone: '9876543211', email: 'jane@example.com', address: '456 Elm St', pincode: '110002' }
+            }
+        ];
+        saveOrders();
+    }
+}
+
+function saveOrders() {
+    localStorage.setItem('restaurantOrders', JSON.stringify(orders));
+}
+
+function placeOrder(orderDetails) {
+    const now = new Date();
+    const order = {
+        id: 'ORD' + Date.now(),
+        date: now.toLocaleDateString(),
+        time: now.toLocaleTimeString(),
+        status: 'Order Placed',
+        items: orderDetails.cart,
+        total: orderDetails.total,
+        customer: orderDetails.customer
+    };
+    orders.push(order);
+    saveOrders();
+}
+
+function updateOrderStatus(orderId, newStatus) {
+    const order = orders.find(o => o.id === orderId);
+    if (order) {
+        order.status = newStatus;
+        saveOrders();
+        displayOrders();
+    }
+}
+
+function displayOrders() {
+    const currentOrdersDiv = document.getElementById('current-orders');
+    const pastOrdersDiv = document.getElementById('past-orders');
+
+    if (!currentOrdersDiv || !pastOrdersDiv) return;
+
+    const currentOrders = orders.filter(order => order.status !== 'Delivered');
+    const pastOrders = orders.filter(order => order.status === 'Delivered');
+
+    currentOrdersDiv.innerHTML = currentOrders.length ? currentOrders.map(order => createOrderCard(order, true)).join('') : '<div class="empty-state">No current orders.</div>';
+    pastOrdersDiv.innerHTML = pastOrders.length ? pastOrders.map(order => createOrderCard(order, false)).join('') : '<div class="empty-state">No past orders.</div>';
+}
+
+function createOrderCard(order, isCurrent) {
+    const statusClass = order.status.toLowerCase().replace(/\s+/g, '-');
+    const itemsList = order.items.map(item => `<li>${item.name} x ${item.quantity} - ₹${item.price * item.quantity}</li>`).join('');
+
+    let statusButtons = '';
+    if (isCurrent) {
+        const nextStatuses = getNextStatuses(order.status);
+        statusButtons = nextStatuses.map(status => `<button class="status-btn" onclick="updateOrderStatus('${order.id}', '${status}')">${status}</button>`).join('');
+    }
+
+    return `
+        <div class="order-card">
+            <div class="order-header">
+                <div class="order-id">${order.id}</div>
+                <div class="order-status status-${statusClass}">${order.status}</div>
+            </div>
+            <div class="order-details">
+                <div class="order-date-time">${order.date} at ${order.time}</div>
+                <ul class="order-items">${itemsList}</ul>
+                <div class="order-total">Total: ₹${order.total}</div>
+            </div>
+            ${isCurrent ? `<div class="status-update">${statusButtons}</div>` : ''}
+        </div>
+    `;
+}
+
+function getNextStatuses(currentStatus) {
+    const statusFlow = {
+        'Order Placed': ['Preparing'],
+        'Preparing': ['Out for Delivery'],
+        'Out for Delivery': ['On the Way'],
+        'On the Way': ['Delivered']
+    };
+    return statusFlow[currentStatus] || [];
+}
+
+function setupOrdersPage() {
+    loadOrders();
+    displayOrders();
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     loadCart();
@@ -534,4 +661,5 @@ document.addEventListener('DOMContentLoaded', () => {
     setupMenuPage();
     setupOrderForm();
     setupFeedbackForm();
+    setupOrdersPage();
 });

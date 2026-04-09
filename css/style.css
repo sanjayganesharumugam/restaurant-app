@@ -1130,3 +1130,119 @@ footer {
         max-width: none;
     }
 }
+
+/* Orders Page Styles */
+.orders-page {
+    padding: 2rem 0 4rem;
+}
+
+.orders-page h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--dark-color);
+}
+
+.orders-section {
+    margin-bottom: 3rem;
+}
+
+.orders-section h2 {
+    margin-bottom: 1.5rem;
+    color: var(--secondary-color);
+    font-size: 1.5rem;
+}
+
+.orders-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.order-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 1.5rem;
+    transition: box-shadow 0.25s ease;
+}
+
+.order-card:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.order-id {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.order-status {
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-placed { background: rgba(255, 209, 102, 0.2); color: #d4a574; }
+.status-preparing { background: rgba(24, 169, 153, 0.2); color: var(--secondary-color); }
+.status-out-for-delivery { background: rgba(232, 93, 93, 0.2); color: var(--primary-color); }
+.status-on-the-way { background: rgba(255, 102, 102, 0.2); color: #ff6666; }
+.status-delivered { background: rgba(102, 204, 102, 0.2); color: #66cc66; }
+
+.order-details {
+    margin-bottom: 1rem;
+}
+
+.order-date-time {
+    color: var(--muted-color);
+    margin-bottom: 0.5rem;
+}
+
+.order-items {
+    list-style: none;
+}
+
+.order-items li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.order-items li:last-child {
+    border-bottom: none;
+}
+
+.order-total {
+    font-weight: 600;
+    color: var(--dark-color);
+    text-align: right;
+    margin-top: 1rem;
+}
+
+.status-update {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.status-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--secondary-color);
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.25s ease;
+}
+
+.status-btn:hover {
+    background: var(--primary-color);
+}
