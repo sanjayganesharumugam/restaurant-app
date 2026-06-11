@@ -70,6 +70,22 @@ function addToCart(name, price) {
     saveCart();
     updateCartCount();
     renderCartPreview();
+
+    // If authenticated, also sync to backend cart
+    const token = localStorage.getItem('authToken');
+    const userId = localStorage.getItem('authUserId');
+    if (token && userId) {
+        fetch('http://localhost:8080/api/cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({ userId: userId, menuItemId: null, quantity: 1, itemName: name, price: price })
+        }).catch(() => {
+            // ignore network errors and keep local cart
+        });
+    }
 }
 
 function setupNavbar() {
@@ -86,6 +102,9 @@ function setupNavbar() {
             updateCartCount();
         });
     }
+
+    // Add Logout button to navbar and wire auth behavior
+    // Login/logout UI removed — no popup or session UI on pages
 }
 
 function setupMenuPage() {
@@ -155,7 +174,25 @@ function setupMenuPage() {
         card.addEventListener('click', () => {
             const dishName = card.dataset.name;
             const dishCategory = card.dataset.category;
-            // Navigate to dish detail page
+            const dishDescription = card.dataset.description || '';
+            const dishPrice = Number(card.dataset.price) || 0;
+            const imgEl = card.querySelector('img');
+            const imageSrc = imgEl ? imgEl.getAttribute('src') : '';
+
+            const currentDish = {
+                name: dishName,
+                category: dishCategory,
+                description: dishDescription,
+                price: dishPrice,
+                image: imageSrc
+            };
+            try {
+                localStorage.setItem('currentDish', JSON.stringify(currentDish));
+            } catch (e) {
+                // ignore storage errors
+            }
+
+            // Navigate to dish detail page (still include query for compatibility)
             window.location.href = `dish-detail.html?name=${encodeURIComponent(dishName)}&category=${encodeURIComponent(dishCategory)}`;
         });
     });
@@ -211,12 +248,34 @@ function setupMenuPage() {
     applyMenuState();
 }
 
-function renderCartPreview() {
+async function renderCartPreview() {
     const cartPreview = document.getElementById('cartPreview');
     const cartTotal = document.getElementById('cartTotal');
 
     if (!cartPreview || !cartTotal) {
         return;
+    }
+
+    // If authenticated and on cart page, try to load server cart first
+    const token = localStorage.getItem('authToken');
+    const userId = localStorage.getItem('authUserId');
+    const currentPage = (window.location.pathname || '').split('/').pop().toLowerCase();
+    if (token && userId && currentPage === 'cart.html') {
+        try {
+            const res = await fetch(`http://localhost:8080/api/cart/${encodeURIComponent(userId)}`, {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (res.ok) {
+                const serverItems = await res.json();
+                // Map server items to local cart format
+                if (Array.isArray(serverItems)) {
+                    cart = serverItems.map(it => ({ name: it.itemName || it.name, price: Number(it.price) || 0, quantity: Number(it.quantity) || 1 }));
+                    saveCart();
+                }
+            }
+        } catch (e) {
+            // ignore errors and use local cart
+        }
     }
 
     if (cart.length === 0) {
@@ -379,7 +438,8 @@ function setupOrderForm() {
                 showMessage('Please fill in all required delivery details.');
                 return;
             }
-            // Save order details to localStorage
+
+            // Build order details and save locally before redirecting to payment app
             const orderDetails = {
                 cart: [...cart],
                 customer: {
@@ -391,9 +451,19 @@ function setupOrderForm() {
                 },
                 total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
             };
-            localStorage.setItem('orderDetails', JSON.stringify(orderDetails));
-            // Redirect to orders page
-            window.location.href = 'orders.html';
+
+            try {
+                localStorage.setItem('orderDetails', JSON.stringify(orderDetails));
+            } catch (e) {
+                // ignore storage errors
+            }
+
+            const amount = Number(orderDetails.total).toFixed(2);
+            const upiUrl = `upi://pay?pa=merchant@upi&pn=Restaurant%20Elegance&am=${amount}&cu=INR&tn=Food%20Order`;
+
+            showMessage('Redirecting to payment app...');
+            // Redirect to UPI/payment handler
+            window.location.href = upiUrl;
         });
     }
 
@@ -441,72 +511,7 @@ function validateFeedbackForm(form) {
     return isValid;
 }
 
-function setupOrdersPage() {
-    const orderDetails = JSON.parse(localStorage.getItem('orderDetails'));
-    if (!orderDetails) {
-        // If no order details, redirect to cart
-        window.location.href = 'cart.html';
-        return;
-    }
-
-    const orderPreview = document.getElementById('orderPreview');
-    const orderTotal = document.getElementById('orderTotal');
-    const deliveryInfo = document.getElementById('deliveryInfo');
-    const cashOnDeliveryBtn = document.getElementById('cashOnDeliveryBtn');
-    const payOnlineBtn = document.getElementById('payOnlineBtn');
-
-    if (!orderPreview || !orderTotal || !deliveryInfo) {
-        return;
-    }
-
-    // Display order items
-    orderPreview.innerHTML = orderDetails.cart.map(item => `
-        <div class="cart-preview-item">
-            <div class="cart-item-name">${item.name}</div>
-            <div class="cart-item-details">
-                <div class="cart-item-price">₹${item.price} x ${item.quantity} = ₹${item.price * item.quantity}</div>
-            </div>
-        </div>
-    `).join('');
-
-    orderTotal.textContent = `₹${orderDetails.total}`;
-
-    // Display delivery details
-    deliveryInfo.innerHTML = `
-        <p><strong>Name:</strong> ${orderDetails.customer.name}</p>
-        <p><strong>Phone:</strong> ${orderDetails.customer.phone}</p>
-        <p><strong>Email:</strong> ${orderDetails.customer.email}</p>
-        <p><strong>Address:</strong> ${orderDetails.customer.address}</p>
-        <p><strong>Pincode:</strong> ${orderDetails.customer.pincode}</p>
-    `;
-
-    // Handle payment buttons
-    if (cashOnDeliveryBtn) {
-        cashOnDeliveryBtn.addEventListener('click', () => {
-            placeOrder(orderDetails);
-            showMessage(`Thank you ${orderDetails.customer.name}. Your order has been placed with Cash on Delivery.`);
-            alert(`Thank you ${orderDetails.customer.name}! Your order has been placed with Cash on Delivery.`);
-            // Clear cart and order details
-            cart = [];
-            saveCart();
-            updateCartCount();
-            localStorage.removeItem('orderDetails');
-            // Redirect to home or menu
-            window.location.href = 'index.html';
-        });
-    }
-
-    if (payOnlineBtn) {
-        payOnlineBtn.addEventListener('click', () => {
-            placeOrder(orderDetails);
-            const upiUrl = `upi://pay?pa=merchant@upi&pn=Restaurant%20Elegance&am=${orderDetails.total}&cu=INR&tn=Food%20Order`;
-            window.location.href = upiUrl;
-            showMessage('Redirecting to payment app...');
-            // Note: In a real app, handle payment success to clear cart
-            localStorage.removeItem('orderDetails');
-        });
-    }
-}
+// `setupOrdersPage` implementation moved/merged later in the file.
 
 function setupFeedbackForm() {
     const feedbackForm = document.getElementById('feedbackForm');
@@ -650,72 +655,184 @@ function getNextStatuses(currentStatus) {
     return statusFlow[currentStatus] || [];
 }
 
-function setupOrdersPage() {
+async function setupOrdersPage() {
+    // Load and render stored orders first (local fallback)
     loadOrders();
     displayOrders();
-}
 
-function showLoginModal() {
-    const loginModal = document.getElementById('loginModal');
-    if (!loginModal) {
-        return;
-    }
-    loginModal.classList.add('active');
-    document.body.classList.add('modal-open');
-}
-
-function hideLoginModal() {
-    const loginModal = document.getElementById('loginModal');
-    if (!loginModal) {
-        return;
-    }
-    loginModal.classList.remove('active');
-    document.body.classList.remove('modal-open');
-}
-
-function setupLoginPopup() {
-    const loginModal = document.getElementById('loginModal');
-    const loginForm = document.getElementById('loginForm');
-    const closeButton = document.querySelector('.modal-close');
-
-    if (!loginModal || !loginForm) {
-        return;
-    }
-
-    loginModal.addEventListener('click', event => {
-        if (event.target === loginModal) {
-            hideLoginModal();
+    // If authenticated, try to fetch real orders from backend and replace local list
+    const token = localStorage.getItem('authToken');
+    const userId = localStorage.getItem('authUserId');
+    if (token && userId) {
+        try {
+            const res = await fetch(`http://localhost:8080/api/orders/${encodeURIComponent(userId)}`, {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (res.ok) {
+                const serverOrders = await res.json();
+                if (Array.isArray(serverOrders)) {
+                    // Map server orders to the local orders shape
+                    orders = serverOrders.map(o => ({
+                        id: o.id || o.orderId || String(o.id),
+                        date: o.date || (o.createdAt ? new Date(o.createdAt).toLocaleDateString() : ''),
+                        time: o.time || (o.createdAt ? new Date(o.createdAt).toLocaleTimeString() : ''),
+                        status: o.status || o.orderStatus || 'Order Placed',
+                        items: Array.isArray(o.items) ? o.items.map(it => ({ name: it.itemName || it.name, price: Number(it.price) || 0, quantity: Number(it.quantity) || 1 })) : [],
+                        total: o.totalPrice || o.total || o.amount || 0,
+                        customer: o.customer || o.user || {}
+                    }));
+                    displayOrders();
+                }
+            }
+        } catch (e) {
+            // ignore and keep local orders
         }
-    });
-
-    if (closeButton) {
-        closeButton.addEventListener('click', hideLoginModal);
     }
 
-    loginForm.addEventListener('submit', event => {
-        event.preventDefault();
+    // If the user just placed an order, show the preview and payment actions
+    const orderDetails = JSON.parse(localStorage.getItem('orderDetails'));
+    if (!orderDetails) {
+        return;
+    }
 
-        const email = loginForm.querySelector('#loginEmail');
-        const password = loginForm.querySelector('#loginPassword');
+    const orderPreview = document.getElementById('orderPreview');
+    const orderTotal = document.getElementById('orderTotal');
+    const deliveryInfo = document.getElementById('deliveryInfo');
+    const cashOnDeliveryBtn = document.getElementById('cashOnDeliveryBtn');
+    const payOnlineBtn = document.getElementById('payOnlineBtn');
 
-        if (!email.value.trim() || !password.value.trim()) {
-            showMessage('Please enter both email and password.');
-            return;
-        }
+    if (!orderPreview || !orderTotal || !deliveryInfo) {
+        return;
+    }
 
-        showMessage(`Welcome back, ${email.value.trim()}!`);
-        hideLoginModal();
-    });
+    // Display order items
+    orderPreview.innerHTML = orderDetails.cart.map(item => `
+        <div class="cart-preview-item">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-details">
+                <div class="cart-item-price">₹${item.price} x ${item.quantity} = ₹${item.price * item.quantity}</div>
+            </div>
+        </div>
+    `).join('');
 
-    showLoginModal();
+    orderTotal.textContent = `₹${orderDetails.total}`;
+
+    // Display delivery details
+    deliveryInfo.innerHTML = `
+        <p><strong>Name:</strong> ${orderDetails.customer.name}</p>
+        <p><strong>Phone:</strong> ${orderDetails.customer.phone}</p>
+        <p><strong>Email:</strong> ${orderDetails.customer.email}</p>
+        <p><strong>Address:</strong> ${orderDetails.customer.address}</p>
+        <p><strong>Pincode:</strong> ${orderDetails.customer.pincode}</p>
+    `;
+
+    // Handle payment buttons
+    if (cashOnDeliveryBtn) {
+        cashOnDeliveryBtn.addEventListener('click', () => {
+            placeOrder(orderDetails);
+            showMessage(`Thank you ${orderDetails.customer.name}. Your order has been placed with Cash on Delivery.`);
+            alert(`Thank you ${orderDetails.customer.name}! Your order has been placed with Cash on Delivery.`);
+            // Clear cart and order details
+            cart = [];
+            saveCart();
+            updateCartCount();
+            localStorage.removeItem('orderDetails');
+            // Redirect to home or menu
+            window.location.href = 'index.html';
+        });
+    }
+
+    if (payOnlineBtn) {
+        payOnlineBtn.addEventListener('click', () => {
+            placeOrder(orderDetails);
+            const upiUrl = `upi://pay?pa=merchant@upi&pn=Restaurant%20Elegance&am=${orderDetails.total}&cu=INR&tn=Food%20Order`;
+            window.location.href = upiUrl;
+            showMessage('Redirecting to payment app...');
+            // Note: In a real app, handle payment success to clear cart
+            localStorage.removeItem('orderDetails');
+        });
+    }
 }
+
+
+function setupDishDetailPage() {
+    const detailSection = document.getElementById('dishDetail');
+    if (!detailSection) return;
+
+    let currentDish = null;
+    try {
+        currentDish = JSON.parse(localStorage.getItem('currentDish'));
+    } catch (e) {
+        currentDish = null;
+    }
+
+    if (!currentDish) {
+        const params = new URLSearchParams(window.location.search);
+        const name = params.get('name') || '';
+        const category = params.get('category') || '';
+        currentDish = { name, category, description: '', price: 0, image: '' };
+    }
+
+    const imgEl = document.getElementById('dishImage');
+    const nameEl = document.getElementById('dishName');
+    const descEl = document.getElementById('dishDescription');
+    const catEl = document.getElementById('dishCategory');
+    const specCat = document.getElementById('specCategory');
+    const specPrice = document.getElementById('specPrice');
+
+    if (imgEl) {
+        const imgName = currentDish.image ? currentDish.image.split('/').pop() : '';
+        imgEl.src = imgName ? `images/${imgName}` : (currentDish.image || '');
+        imgEl.alt = currentDish.name || 'Dish';
+    }
+
+    if (nameEl) nameEl.textContent = currentDish.name || 'Dish Name';
+    if (descEl) descEl.textContent = currentDish.description || '';
+    const categoryText = (currentDish.category || '').replace('-', ' ').toUpperCase();
+    if (catEl) catEl.textContent = categoryText;
+    if (specCat) specCat.textContent = categoryText;
+    if (specPrice) specPrice.textContent = `₹${currentDish.price || 0}`;
+    if (currentDish.name) document.title = `${currentDish.name} - Restaurant Elegance`;
+
+    const quantityInput = document.getElementById('quantity');
+    const decBtn = document.getElementById('decreaseQty');
+    const incBtn = document.getElementById('increaseQty');
+    if (decBtn && incBtn && quantityInput) {
+        decBtn.addEventListener('click', () => {
+            const val = Math.max(1, parseInt(quantityInput.value) - 1);
+            quantityInput.value = val;
+        });
+        incBtn.addEventListener('click', () => {
+            const val = Math.min(99, parseInt(quantityInput.value) + 1);
+            quantityInput.value = val;
+        });
+    }
+
+    const addBtn = document.getElementById('addToCartDetailBtn');
+    const successMessage = document.getElementById('successMessage');
+    if (addBtn && quantityInput) {
+        addBtn.addEventListener('click', () => {
+            const qty = Math.max(1, parseInt(quantityInput.value) || 1);
+            for (let i = 0; i < qty; i++) {
+                addToCart(currentDish.name, currentDish.price);
+            }
+            if (successMessage) {
+                successMessage.style.display = 'block';
+                setTimeout(() => { successMessage.style.display = 'none'; }, 2000);
+            }
+        });
+    }
+}
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     loadCart();
     setupNavbar();
     setupMenuPage();
+    setupDishDetailPage();
     setupOrderForm();
     setupFeedbackForm();
     setupOrdersPage();
-    setupLoginPopup();
+    // Login/register popup removed; no popup initialization
 });

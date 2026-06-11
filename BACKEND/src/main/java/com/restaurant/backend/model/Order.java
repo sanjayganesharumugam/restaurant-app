@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,21 +26,32 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private LocalDateTime orderDate;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
-    private Double total;
+    private Double totalPrice;
+
+    private String location;
+
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
+
+    public enum Status {
+        PLACED, PREPARING, OUT_FOR_DELIVERY, DELIVERED
+    }
 
     // Constructors, getters, setters
 
     public Order() {}
 
-    public Order(User user, LocalDateTime orderDate, Double total) {
+    public Order(User user, Status status, Double totalPrice, String location, LocalDateTime createdAt) {
         this.user = user;
-        this.orderDate = orderDate;
-        this.total = total;
+        this.status = status;
+        this.totalPrice = totalPrice;
+        this.location = location;
+        this.createdAt = createdAt;
     }
 
     public Long getId() {
@@ -57,20 +70,36 @@ public class Order {
         this.user = user;
     }
 
-    public LocalDateTime getOrderDate() {
-        return orderDate;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setOrderDate(LocalDateTime orderDate) {
-        this.orderDate = orderDate;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
-    public Double getTotal() {
-        return total;
+    public Double getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setTotal(Double total) {
-        this.total = total;
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public List<OrderItem> getOrderItems() {

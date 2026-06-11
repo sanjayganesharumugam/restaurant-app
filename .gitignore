@@ -1,0 +1,5 @@
+.env
+# IDE files
+.vscode/
+# Maven target
+BACKEND/target/

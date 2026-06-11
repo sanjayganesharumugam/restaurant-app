@@ -1,62 +1,26 @@
-package com.restaurant.backend.model;
+package com.restaurant.backend.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.restaurant.backend.model.MenuItem.Category;
+import com.restaurant.backend.model.MenuItem.Type;
 
-@Entity
-@Table(name = "MENU_ITEMS")
-public class MenuItem {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class MenuItemRequest {
 
     private String name;
-
-    @Enumerated(EnumType.STRING)
     private Category category;
-
-    @Enumerated(EnumType.STRING)
     private Type type;
-
     private Double price;
-
     private String description;
-
     private String imageUrl;
 
-    public enum Category {
-        STARTER, MAIN, SIDE, BEVERAGE, ICE_CREAM
-    }
+    public MenuItemRequest() {}
 
-    public enum Type {
-        VEG, NON_VEG
-    }
-
-    // Constructors, getters, setters
-
-    public MenuItem() {}
-
-    public MenuItem(String name, Category category, Type type, Double price, String description, String imageUrl) {
+    public MenuItemRequest(String name, Category category, Type type, Double price, String description, String imageUrl) {
         this.name = name;
         this.category = category;
         this.type = type;
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
